@@ -113,6 +113,48 @@
       transition: opacity .2s;
     }
     .btn-submit:hover { opacity: .85; }
+
+    /* ----- iPhone / telas estreitas ----- */
+    @media (max-width: 480px) {
+
+      /* 1) Container ocupa quase toda a largura, com margens menores  */
+      .container {
+        margin: 16px 8px;
+        padding: 24px 16px;
+      }
+
+      /* 2) Título mais compacto */
+      h1 {
+        font-size: 1rem;
+        line-height: 1.3;
+        text-align: center;      /* garante centralização */
+      }
+
+      /* 3) Escala 0-10 em duas linhas de 5 botões */
+      .scale {
+        flex-wrap: wrap;         /* quebra linha */
+        gap: 4px;                /* espaçamento uniforme */
+      }
+      .scale button {
+        flex: 0 0 calc(20% - 4px); /* 5 botões por linha */
+        margin: 0;                 /* remove margem lateral antiga */
+      }
+
+      /* 4) Tabela redimensionada + rolagem horizontal se apertar */
+      table {
+        font-size: 0.8rem;
+        display: block;        /* habilita rolagem */
+        overflow-x: auto;
+      }
+      th, td {
+        padding: 6px 2px;      /* células menores */
+      }
+
+      /* 5) Textarea mais baixo para caber sem rolagem externa */
+      textarea {
+        min-height: 90px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -164,7 +206,7 @@
             <td><input type="radio" name="fiscal" value="Não utilizo"></td>
           </tr>
           <tr>
-            <td>Setor Dept° Pessoal</td>
+            <td>Setor Dpt de Pessoal</td>
             <td><input type="radio" name="pessoal" value="Ruim" required></td>
             <td><input type="radio" name="pessoal" value="Regular"></td>
             <td><input type="radio" name="pessoal" value="Bom"></td>
@@ -256,60 +298,91 @@
   </div>
 
   <script>
-    /*
-      JS leve para criar os botões da escala 0–10 e para submeter o formulário.
-    */
-    const ratingDiv = document.getElementById('overall');
-    for (let i = 0; i <= 10; i++) {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = i;
-      btn.addEventListener('click', () => selectOverall(i));
-      ratingDiv.appendChild(btn);
-    }
-
-    let selectedOverall = null;
-    function selectOverall(val) {
-      selectedOverall = val;
-      // destaco o botão escolhido mudando a opacidade dos demais
-      [...ratingDiv.children].forEach(b => b.style.opacity = '0.4');
-      ratingDiv.children[val].style.opacity = '1';
-    }
-
-    document.getElementById('surveyForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (selectedOverall === null) {
-        alert('Por favor, selecione sua nota geral de 0 a 10.');
-        return;
+    (function(){
+      /* --- CAPTURA IDENTIFICADOR VIA URL (?id=... ou ?email=...) --- */
+      const urlParams = new URLSearchParams(window.location.search);
+      const identifier = urlParams.get('id') || urlParams.get('email') || urlParams.get('cid');
+      const formEl = document.getElementById('surveyForm');
+      if(identifier){
+        const hiddenId = document.createElement('input');
+        hiddenId.type = 'hidden';
+        hiddenId.name = 'identificador';
+        hiddenId.value = identifier;
+        formEl.appendChild(hiddenId);
+      }
+      /*
+        JS leve para criar os botões da escala 0–10 e para submeter o formulário.
+      */
+      const ratingDiv = document.getElementById('overall');
+      for (let i = 0; i <= 10; i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = i;
+        btn.addEventListener('click', () => selectOverall(i));
+        ratingDiv.appendChild(btn);
       }
 
-      const data = new FormData(e.target);
-      data.append('overall', selectedOverall);
+      let selectedOverall = null;
+      function selectOverall(val) {
+        selectedOverall = val;
+        // destaco o botão escolhido mudando a opacidade dos demais
+        [...ratingDiv.children].forEach(b => b.style.opacity = '0.4');
+        ratingDiv.children[val].style.opacity = '1';
+      }
 
-      try {
-        /*
-          Substitua \u2018LINK_DA_SUA_API_AQUI\u2019 pelo endpoint de backend
-          (por exemplo, um Google Apps Script que grave as respostas). Se
-          preferir, podemos tratar disso no próximo passo.
-        */
-        const res = await fetch('https://script.google.com/macros/s/AKfycbw9Qaf-KCuY0cMHUW73AdaOnpzjTSaMDw0meYTg0WDH9U0WpGzdXOWbJc_-1a1bWBs5yg/exec', {
-          method: 'POST',
-          body: data
-        });
-        
-        if (res.ok) {
-          alert('Feedback enviado com sucesso!');
-          e.target.reset();
-          selectedOverall = null;
-          [...ratingDiv.children].forEach(b => b.style.opacity = '1');
-        } else {
-          alert('Erro ao enviar. Tente novamente.');
+      document.getElementById('surveyForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (selectedOverall === null) {
+          alert('Por favor, selecione sua nota geral de 0 a 10.');
+          return;
         }
-      } catch (err) {
-        alert('Falha de conexão.');
-        console.error(err);
-      }
-    });
+
+        const formData = new FormData(e.target);
+        formData.append('overall', selectedOverall);
+        let data = {};
+
+          // Convert FormData to JSON Object
+        formData.forEach((value, key) => {
+          if (data[key]) {
+              if (Array.isArray(data[key])) {
+                  data[key].push(value);
+              } else {
+                  data[key] = [data[key], value];
+              }
+          } else {
+              data[key] = value;
+          }
+        });
+
+        try {
+          /*
+            Substitua \u2018LINK_DA_SUA_API_AQUI\u2019 pelo endpoint de backend
+            (por exemplo, um Google Apps Script que grave as respostas). Se
+            preferir, podemos tratar disso no próximo passo.
+          */
+          const res = await fetch('https://script.google.com/macros/s/AKfycbz46Q6hN-53Cq3sXOE4W7LrfU-vgWXhTwCX1ZwoJIL7LeeNgURtnsS7aLyzSCa214NNlA/exec', {
+            method: 'POST',
+            body: JSON.stringify(data),
+          });
+          
+          if (res.ok) {
+            alert('Avaliação enviada com SUCESSO!');
+            e.target.reset();
+            selectedOverall = null;
+            [...ratingDiv.children].forEach(b => b.style.opacity = '1');
+          } else {
+            alert('Erro ao enviar. Tente novamente.');
+          }
+        } catch (err) {
+          // 1) imprime o objeto completo no Console
+          console.error('Detalhes do erro:', err);
+
+          // 2) mostra tudo em um alert (útil se você não quiser abrir o DevTools)
+          alert(JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
+          alert('Falha de conexão');
+        }
+      });
+  })()
   </script>
 </body>
 </html>

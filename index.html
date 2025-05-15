@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pesquisa de Opinião – Grupo Lider</title>
+
+  <!-- Fonte simples e moderna -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /*
+      Folha de estilos básica. Usei apenas CSS puro (sem frameworks) para
+      facilitar a manutenção. Todas as cores importantes estão em variáveis.
+    */
+    :root {
+      --royal-blue: #0057b8; /* Azul real – ajuste se necessário */
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f7f9fc;
+      color: #333;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 32px auto 48px;
+      padding: 32px 40px;
+      background: #fff;
+      border: 2px solid var(--royal-blue);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .logo img { max-width: 220px; }
+
+    h1 {
+      font-size: 1.2rem;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 12px;
+      color: var(--royal-blue);
+    }
+
+    .scale {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+    .scale button {
+      flex: 1;
+      margin: 0 2px;
+      padding: 12px 0;
+      background: var(--royal-blue);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: opacity .2s;
+    }
+    .scale button:hover { opacity: .85; }
+
+    .section-title {
+      font-weight: 500;
+      margin: 28px 0 10px;
+      color: var(--royal-blue);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: .9rem;
+    }
+    th, td {
+      padding: 8px 4px;
+      text-align: center;
+      border: 1px solid #ccc;
+    }
+    th {
+      background: var(--royal-blue);
+      color: #fff;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      resize: vertical;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: .9rem;
+    }
+
+    .btn-submit {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: var(--royal-blue);
+      color: #fff;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: opacity .2s;
+    }
+    .btn-submit:hover { opacity: .85; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Logo da empresa -->
+    <div class="logo">
+      <!-- Substitua o src pelo endereço oficial, se mudar -->
+      <img src="assets/logo_grupo_lider.png" alt="Logo Grupo Lider">
+      <!--<img src="https://www.grlider.com.br/wp-content/uploads/2021/06/logo_grupo_lider.png" alt="Logo Grupo Lider">-->
+    </div>
+
+    <!-- Texto introdutório -->
+    <h1>Prezado cliente, queremos ouvir sua opinião!<br> Avalie em 20 segundos!</h1>
+    <p style="text-align:center;">De 0 a 10, qual o seu grau de satisfação com os serviços prestados pelo <strong>GRUPO LIDER</strong>?</p>
+
+    <!-- Formulário principal -->
+    <form id="surveyForm">
+      <!-- Escala 0–10 (gerada via JS) -->
+      <div class="scale" id="overall"></div>
+
+      <p class="section-title">Clique nos botões abaixo para opinar.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Departamento</th>
+            <th>Ruim</th>
+            <th>Regular</th>
+            <th>Bom</th>
+            <th>Ótimo</th>
+            <th>Não utilizo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Cada linha possui 5 opções (radio). O atributo "name" deve ser único por departamento. -->
+          <tr>
+            <td>Setor de Contabilidade</td>
+            <td><input type="radio" name="contabilidade" value="Ruim" required></td>
+            <td><input type="radio" name="contabilidade" value="Regular"></td>
+            <td><input type="radio" name="contabilidade" value="Bom"></td>
+            <td><input type="radio" name="contabilidade" value="Ótimo"></td>
+            <td><input type="radio" name="contabilidade" value="Não utilizo"></td>
+          </tr>
+          <tr>
+            <td>Setor Fiscal</td>
+            <td><input type="radio" name="fiscal" value="Ruim" required></td>
+            <td><input type="radio" name="fiscal" value="Regular"></td>
+            <td><input type="radio" name="fiscal" value="Bom"></td>
+            <td><input type="radio" name="fiscal" value="Ótimo"></td>
+            <td><input type="radio" name="fiscal" value="Não utilizo"></td>
+          </tr>
+          <tr>
+            <td>Setor D. de Pessoal</td>
+            <td><input type="radio" name="pessoal" value="Ruim" required></td>
+            <td><input type="radio" name="pessoal" value="Regular"></td>
+            <td><input type="radio" name="pessoal" value="Bom"></td>
+            <td><input type="radio" name="pessoal" value="Ótimo"></td>
+            <td><input type="radio" name="pessoal" value="Não utilizo"></td>
+          </tr>
+          <tr>
+            <td>Setor Retenção de Tributos</td>
+            <td><input type="radio" name="retencao" value="Ruim" required></td>
+            <td><input type="radio" name="retencao" value="Regular"></td>
+            <td><input type="radio" name="retencao" value="Bom"></td>
+            <td><input type="radio" name="retencao" value="Ótimo"></td>
+            <td><input type="radio" name="retencao" value="Não utilizo"></td>
+          </tr>
+          <tr>
+            <td>Setor de Locação</td>
+            <td><input type="radio" name="locacao" value="Ruim" required></td>
+            <td><input type="radio" name="locacao" value="Regular"></td>
+            <td><input type="radio" name="locacao" value="Bom"></td>
+            <td><input type="radio" name="locacao" value="Ótimo"></td>
+            <td><input type="radio" name="locacao" value="Não utilizo"></td>
+          </tr>
+          <tr>
+            <td>Setor de Condomínios</td>
+            <td><input type="radio" name="condominios" value="Ruim" required></td>
+            <td><input type="radio" name="condominios" value="Regular"></td>
+            <td><input type="radio" name="condominios" value="Bom"></td>
+            <td><input type="radio" name="condominios" value="Ótimo"></td>
+            <td><input type="radio" name="condominios" value="Não utilizo"></td>
+          </tr>
+          <tr>
+            <td>Setor de Seguros</td>
+            <td><input type="radio" name="seguros" value="Ruim" required></td>
+            <td><input type="radio" name="seguros" value="Regular"></td>
+            <td><input type="radio" name="seguros" value="Bom"></td>
+            <td><input type="radio" name="seguros" value="Ótimo"></td>
+            <td><input type="radio" name="seguros" value="Não utilizo"></td>
+          </tr>
+          <tr>
+            <td>Setor Despachantes</td>
+            <td><input type="radio" name="despachantes" value="Ruim" required></td>
+            <td><input type="radio" name="despachantes" value="Regular"></td>
+            <td><input type="radio" name="despachantes" value="Bom"></td>
+            <td><input type="radio" name="despachantes" value="Ótimo"></td>
+            <td><input type="radio" name="despachantes" value="Não utilizo"></td>
+          </tr>
+          <tr>
+            <td>Setor Jurídico</td>
+            <td><input type="radio" name="juridico" value="Ruim" required></td>
+            <td><input type="radio" name="juridico" value="Regular"></td>
+            <td><input type="radio" name="juridico" value="Bom"></td>
+            <td><input type="radio" name="juridico" value="Ótimo"></td>
+            <td><input type="radio" name="juridico" value="Não utilizo"></td>
+          </tr>
+          <tr>
+            <td>Secretaria</td>
+            <td><input type="radio" name="secretaria" value="Ruim" required></td>
+            <td><input type="radio" name="secretaria" value="Regular"></td>
+            <td><input type="radio" name="secretaria" value="Bom"></td>
+            <td><input type="radio" name="secretaria" value="Ótimo"></td>
+            <td><input type="radio" name="secretaria" value="Não utilizo"></td>
+          </tr>
+          <tr>
+            <td>Serviço dos Office Boys</td>
+            <td><input type="radio" name="officeboys" value="Ruim" required></td>
+            <td><input type="radio" name="officeboys" value="Regular"></td>
+            <td><input type="radio" name="officeboys" value="Bom"></td>
+            <td><input type="radio" name="officeboys" value="Ótimo"></td>
+            <td><input type="radio" name="officeboys" value="Não utilizo"></td>
+          </tr>
+          <tr>
+            <td>Telefonistas</td>
+            <td><input type="radio" name="telefonistas" value="Ruim" required></td>
+            <td><input type="radio" name="telefonistas" value="Regular"></td>
+            <td><input type="radio" name="telefonistas" value="Bom"></td>
+            <td><input type="radio" name="telefonistas" value="Ótimo"></td>
+            <td><input type="radio" name="telefonistas" value="Não utilizo"></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <label for="comments" class="section-title">Escreva aqui algo que deseja acrescentar.</label>
+      <textarea id="comments" name="comments" placeholder="Digite seu comentário..."></textarea>
+
+      <p style="text-align:center;font-weight:500;margin:24px 0;">OBRIGADO POR NOS AJUDAR A MELHORAR NOSSOS SERVIÇOS!</p>
+
+      <button type="submit" class="btn-submit">Enviar</button>
+    </form>
+  </div>
+
+  <script>
+    /*
+      JS leve para criar os botões da escala 0–10 e para submeter o formulário.
+    */
+    const ratingDiv = document.getElementById('overall');
+    for (let i = 0; i <= 10; i++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = i;
+      btn.addEventListener('click', () => selectOverall(i));
+      ratingDiv.appendChild(btn);
+    }
+
+    let selectedOverall = null;
+    function selectOverall(val) {
+      selectedOverall = val;
+      // destaco o botão escolhido mudando a opacidade dos demais
+      [...ratingDiv.children].forEach(b => b.style.opacity = '0.4');
+      ratingDiv.children[val].style.opacity = '1';
+    }
+
+    document.getElementById('surveyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (selectedOverall === null) {
+        alert('Por favor, selecione sua nota geral de 0 a 10.');
+        return;
+      }
+
+      const formData = new FormData(e.target);
+      formData.append('overall', selectedOverall);
+      let data = {};
+
+         // Convert FormData to JSON Object
+      formData.forEach((value, key) => {
+        if (data[key]) {
+            if (Array.isArray(data[key])) {
+                data[key].push(value);
+            } else {
+                data[key] = [data[key], value];
+            }
+        } else {
+            data[key] = value;
+        }
+      });
+
+      try {
+        /*
+          Substitua \u2018LINK_DA_SUA_API_AQUI\u2019 pelo endpoint de backend
+          (por exemplo, um Google Apps Script que grave as respostas). Se
+          preferir, podemos tratar disso no próximo passo.
+        */
+        const res = await fetch('https://script.google.com/macros/s/AKfycbz46Q6hN-53Cq3sXOE4W7LrfU-vgWXhTwCX1ZwoJIL7LeeNgURtnsS7aLyzSCa214NNlA/exec', {
+          method: 'POST',
+          body: JSON.stringify(data),
+        });
+        
+        if (res.ok) {
+          alert('Feedback enviado com sucesso!');
+          e.target.reset();
+          selectedOverall = null;
+          [...ratingDiv.children].forEach(b => b.style.opacity = '1');
+        } else {
+          alert('Erro ao enviar. Tente novamente.');
+        }
+      } catch (err) {
+        // 1) imprime o objeto completo no Console
+        console.error('Detalhes do erro:', err);
+
+        // 2) mostra tudo em um alert (útil se você não quiser abrir o DevTools)
+        alert(JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
+        alert('Falha de conexão');
+      }
+    });
+  </script>
+</body>
+</html>

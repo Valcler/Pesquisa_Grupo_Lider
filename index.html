@@ -164,7 +164,7 @@
             <td><input type="radio" name="fiscal" value="Não utilizo"></td>
           </tr>
           <tr>
-            <td>Setor Dpt de Pessoal</td>
+            <td>Setor Dept° Pessoal</td>
             <td><input type="radio" name="pessoal" value="Ruim" required></td>
             <td><input type="radio" name="pessoal" value="Regular"></td>
             <td><input type="radio" name="pessoal" value="Bom"></td>
@@ -283,22 +283,8 @@
         return;
       }
 
-      const formData = new FormData(e.target);
-      formData.append('overall', selectedOverall);
-      let data = {};
-
-         // Convert FormData to JSON Object
-      formData.forEach((value, key) => {
-        if (data[key]) {
-            if (Array.isArray(data[key])) {
-                data[key].push(value);
-            } else {
-                data[key] = [data[key], value];
-            }
-        } else {
-            data[key] = value;
-        }
-      });
+      const data = new FormData(e.target);
+      data.append('overall', selectedOverall);
 
       try {
         /*
@@ -306,9 +292,9 @@
           (por exemplo, um Google Apps Script que grave as respostas). Se
           preferir, podemos tratar disso no próximo passo.
         */
-        const res = await fetch('https://script.google.com/macros/s/AKfycbz46Q6hN-53Cq3sXOE4W7LrfU-vgWXhTwCX1ZwoJIL7LeeNgURtnsS7aLyzSCa214NNlA/exec', {
+        const res = await fetch('https://script.google.com/macros/s/AKfycbw9Qaf-KCuY0cMHUW73AdaOnpzjTSaMDw0meYTg0WDH9U0WpGzdXOWbJc_-1a1bWBs5yg/exec', {
           method: 'POST',
-          body: JSON.stringify(data),
+          body: data
         });
         
         if (res.ok) {
@@ -320,12 +306,8 @@
           alert('Erro ao enviar. Tente novamente.');
         }
       } catch (err) {
-        // 1) imprime o objeto completo no Console
-        console.error('Detalhes do erro:', err);
-
-        // 2) mostra tudo em um alert (útil se você não quiser abrir o DevTools)
-        alert(JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
-        alert('Falha de conexão');
+        alert('Falha de conexão.');
+        console.error(err);
       }
     });
   </script>
